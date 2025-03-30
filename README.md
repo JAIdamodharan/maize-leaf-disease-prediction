@@ -2,7 +2,7 @@
 
 This Streamlit application allows users to upload images and get predictions using a pre-trained deep learning model.
 
-## Setup Instructions
+## Setup Instructions 
 
 1. Clone this repository:
 ```
