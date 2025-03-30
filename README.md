@@ -6,7 +6,7 @@ This Streamlit application allows users to upload images and get predictions usi
 
 1. Clone this repository:
 ```
-git clone <repository-url>
+git clone [<repository-url>](https://github.com/JAIdamodharan/maize-leaf-disease-prediction)
 cd image_prediction_app
 ```
 
