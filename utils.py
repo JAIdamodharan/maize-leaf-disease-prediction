@@ -1,37 +1,32 @@
 import numpy as np
-from PIL import Image
+import torch
 import tensorflow as tf
 
-def preprocess_image(image, target_size=(224, 224)):
-    """Preprocess an image for the model
-    
-    Args:
-        image: PIL Image object
-        target_size: Tuple of (height, width) to resize the image to
-        
-    Returns:
-        Preprocessed image as numpy array
-    """
-    # Resize image
-    image = image.resize(target_size)
-    
-    # Convert to numpy array
-    img_array = np.array(image)
-    
-    # Handle grayscale images
-    if len(img_array.shape) == 2:
-        img_array = np.stack((img_array,)*3, axis=-1)
-    
-    # Handle RGBA images
-    if img_array.shape[-1] == 4:
-        img_array = img_array[:, :, :3]
-    
-    # Normalize pixel values
-    img_array = img_array.astype(np.float32) / 255.0
-    
-    # Apply any other necessary preprocessing (depends on how the model was trained)
-    # For example, if the model was trained with preprocessing from tf.keras.applications:
-    # from tf.keras.applications.mobilenet_v2 import preprocess_input
-    # img_array = preprocess_input(img_array * 255)
-    
-    return img_array
+def preprocess_image(image):
+    """Preprocess the image before passing it to the model."""
+    image = image.resize((224, 224))  # Resize to model's input size
+
+    if isinstance(image, np.ndarray):  # If already an array, continue
+        img_array = image
+    else:
+        img_array = np.array(image)  # Convert PIL Image to NumPy array
+
+    # Normalize to [0, 1]
+    img_array = img_array / 255.0
+
+    if len(img_array.shape) == 2:  # Grayscale image case
+        img_array = np.expand_dims(img_array, axis=-1)  # Add channel dim
+
+    if img_array.shape[-1] == 1:  # Convert grayscale to 3-channel
+        img_array = np.repeat(img_array, 3, axis=-1)
+
+    if isinstance(model, tf.keras.Model):  # TensorFlow
+        return img_array  # TensorFlow expects (224, 224, 3)
+
+    elif isinstance(model, torch.jit.ScriptModule):  # PyTorch
+        img_array = np.transpose(img_array, (2, 0, 1))  # Convert to (3, 224, 224)
+        img_array = torch.tensor(img_array, dtype=torch.float32).unsqueeze(0)  # Add batch dimension
+        return img_array
+
+    else:
+        raise ValueError("Unsupported model type")
