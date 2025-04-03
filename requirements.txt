@@ -1,6 +1,6 @@
 streamlit==1.31.0
-tensorflow-macos  # Use tensorflow for Intel Macs
-tensorflow-metal  # Only for M1/M2/M3
+tensorflow-macos  
+tensorflow-metal  
 Pillow==10.1.0
 numpy==1.24.3
 gdown==4.7.3
